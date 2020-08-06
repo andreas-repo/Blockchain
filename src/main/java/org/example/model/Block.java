@@ -8,6 +8,7 @@ public class Block {
     public String hash;
     public String previousHash;
     private String data;
+    private int nonce;
     private final long timeStamp; //ms since 1/1/1970
 
     //Block Constructor
@@ -20,8 +21,17 @@ public class Block {
 
     public String calculateHash() {
         String calculateHash = StringUtil.applySha256(
-                previousHash + Long.toString(timeStamp) + data
+                previousHash + Long.toString(timeStamp) + Integer.toString(nonce) + data
         );
         return calculateHash;
+    }
+
+    public void mineBlock(int difficulty) {
+        String target = new String(new char[difficulty]).replace('\0', '0');    //create a string with difficulty * "0"
+        while(!hash.substring( 0, difficulty).equals(target)) {
+            nonce++;
+            hash = calculateHash();
+        }
+        System.out.println("Block mined!! : " +hash);
     }
 }
